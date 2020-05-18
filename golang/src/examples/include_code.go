@@ -61,7 +61,7 @@ func Input(fileName *string) (io.ReadCloser, error) {
 	if fileName != nil && *fileName != "" {
 		input, err := os.Open(*fileName)
 		if err != nil {
-			return nil, fmt.Errorf("failed to open input file: %!v(MISSING)", err)
+			return nil, fmt.Errorf("failed to open input file: %v", err)
 		}
 		return input, nil
 	}

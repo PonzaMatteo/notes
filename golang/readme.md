@@ -1,7 +1,7 @@
 # 01 - Some Examples
+Before starting to dive into the language let's give a look to some simple program.
 
 ## Hello World
-
 ```go
 package main
 
@@ -13,10 +13,28 @@ func main()  {
 ```
 
 
-## Text Processing
+## HTTP Server
+```go
+failed to read file to include: open ./src/example/01_http_server.go: no such file or directory```
 
+
+## HTTP Client
+```go
+failed to read file to include: open ./src/example/01_http_client.go: no such file or directory```
+
+
+## Another HTTP Server
+```go
+failed to read file to include: open ./src/example/02_http_server.go: no such file or directory```
+
+
+## Another HTTP Client
+```go
+failed to read file to include: open ./src/example/02_http_client.go: no such file or directory```
+
+
+## A CLI Tool
 Let's see a program that allow to process a markdown file and include some source code files as code blocks. The placeholder will be in the at the beginning of a new line with the format `!code(file_name)`
-
 ```go
 
 package main
@@ -81,11 +99,12 @@ func Input(fileName *string) (io.ReadCloser, error) {
 	if fileName != nil && *fileName != "" {
 		input, err := os.Open(*fileName)
 		if err != nil {
-			return nil, fmt.Errorf("failed to open input file: %!v(MISSING)", err)
+			return nil, fmt.Errorf("failed to open input file: %v", err)
 		}
 		return input, nil
 	}
 	return os.Stdin, nil
 }
 ```
+
 
