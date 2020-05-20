@@ -33,7 +33,7 @@ failed to read file to include: open ./src/example/02_http_server.go: no such fi
 failed to read file to include: open ./src/example/02_http_client.go: no such file or directory```
 
 
-## A CLI Tool
+## CLI Tool
 Let's see a program that allow to process a markdown file and include some source code files as code blocks. The placeholder will be in the at the beginning of a new line with the format `!code(file_name)`
 ```go
 
@@ -108,3 +108,85 @@ func Input(fileName *string) (io.ReadCloser, error) {
 ```
 
 
+# The Language
+
+## Brief History 
+The draft of the language started in 2007 Robert Griesemer, Rob Pike and Ken Thompson and became an open source project in 2009. What is the purpose of the project?
+> Go was born out of frustration with existing languages and environments for the work we were doing at Google. Programming had become too difficult and the choice of languages was partly to blame. One had to choose either efficient compilation, efficient execution, or ease of programming; all three were not available in the same mainstream language. 
+
+> Go addressed these issues by attempting to combine the **ease** of programming of an interpreted, dynamically typed language with the **efficiency** and **safety** of a statically typed, compiled language. It also aimed to be modern, with **support for networked and multicore computing**. Finally, working with Go is intended to be **fast**: it should take at most a few seconds to build a large executable on a single computer. 
+
+[More Info](https://golang.org/doc/faq#history)
+
+**TA**:
+ - ~10 Years history -> ecosystem is not that rich? 
+ - GO try to make it easy to build simple, reliable and efficient software
+ 
+**Fun Fact**:
+ (maybe not that fun..)  in official go faq website, there are 37 "Why" question, and 13 of them are "Why [...] not" questions... 
+ 
+ ## Control Structures
+ 
+The syntax of the language doesn't have anything surprising, maybe the only particular thing is the ability to capture declarations also in the if.
+```go
+package main
+
+import (
+	"fmt"
+	"math/rand"
+)
+
+func main() {
+	// normal if
+	rnd := rand.Float64()
+	if rnd < 0.01 { 		// () brackets are not required
+		fmt.Println("Woow!")
+	} else { 				// but {} are!
+		fmt.Println("....")
+	}
+
+	// capturing variable
+	if rnd := rand.Int(); rnd%2 == 1 {
+		fmt.Printf("%d is odd", rnd)
+	} else {
+		fmt.Printf("%d is even", rnd)
+	}
+
+	// note that a declaration would not compile since the type of rnd id float64
+	// rnd := rand.Int()
+}
+```
+
+```go
+package main
+
+import (
+	"fmt"
+	"math/rand"
+	"strings"
+)
+
+func main() {
+	// each of the tree section is optional
+	for i := 0; i < 10; i++ {
+		fmt.Println(i)
+	}
+
+	var fruits = strings.Split("🍏,🍎,🍐,🥑", ",")
+	for i := range fruits {
+		fmt.Println(fruits[i])
+	}
+
+	for i, fruit := range fruits {
+		fmt.Println(i, fruit)
+	}
+
+	// no condition will be "infinite" loop
+	for  {
+		fmt.Print(".")
+		if rand.Float64() < 0.5 {
+			break
+		}
+	}
+}
+```
