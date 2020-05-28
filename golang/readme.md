@@ -127,7 +127,7 @@ The draft of the language started in 2007 Robert Griesemer, Rob Pike and Ken Tho
  
  ## Control Structures
  
-The syntax of the language doesn't have anything surprising, maybe the only particular thing is the ability to capture declarations also in the if.
+The syntax of the language doesn't have anything surprising, maybe the only particular thing is the ability to capture declarations also in the if/switch.
 ```go
 package main
 
@@ -139,9 +139,9 @@ import (
 func main() {
 	// normal if
 	rnd := rand.Float64()
-	if rnd < 0.01 { 		// () brackets are not required
+	if rnd < 0.01 { // () brackets are not required
 		fmt.Println("Woow!")
-	} else { 				// but {} are!
+	} else { // but {} are!
 		fmt.Println("....")
 	}
 
@@ -151,9 +151,17 @@ func main() {
 	} else {
 		fmt.Printf("%d is even", rnd)
 	}
-
 	// note that a declaration would not compile since the type of rnd id float64
 	// rnd := rand.Int()
+
+	switch rnd := rand.Int(); rnd%2 {
+	case 0:
+		fmt.Printf("%d is even", rnd)
+	case 1:
+		fmt.Printf("%d is odd", rnd)
+	default:
+		fmt.Printf("That's pretty odd?!")
+	}
 }
 ```
 
@@ -163,7 +171,6 @@ package main
 import (
 	"fmt"
 	"math/rand"
-	"strings"
 )
 
 func main() {
@@ -172,7 +179,7 @@ func main() {
 		fmt.Println(i)
 	}
 
-	var fruits = strings.Split("🍏,🍎,🍐,🥑", ",")
+	var fruits = []string{"🍏", "🍎", "🍐", "🥑"}
 	for i := range fruits {
 		fmt.Println(fruits[i])
 	}
@@ -182,11 +189,31 @@ func main() {
 	}
 
 	// no condition will be "infinite" loop
-	for  {
+	for {
 		fmt.Print(".")
 		if rand.Float64() < 0.5 {
 			break
 		}
 	}
+	fruits = append(fruits[:1], fruits[2:]...)
 }
 ```
+
+
+## Types
+
+### Basic types
+- string
+- bool.
+- numeric types:
+    - integer: int, rune, int(8|16|32|64)
+    - unsigned: byte, u + one of the above
+    - uintptr: [probably don't need to use](https://stackoverflow.com/questions/59042646/whats-the-difference-between-uint-and-uintptr-in-golang)
+    - floating point: float32, float64 
+    - complex numbers: complex64, complex128.
+    
+Go does not provide implicit conversion between numeric types: [why?](https://golang.org/doc/faq#conversions)
+
+`string` can contain arbitrary bytes, but in general literal strings almost always contain UTF-8 characters (Go source file must be written in UTF-8). `rune` is "UTF-8 code point", without going too much into the details we can think of a rune a character. [details](https://blog.golang.org/strings).
+
+   

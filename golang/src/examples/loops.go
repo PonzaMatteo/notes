@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"math/rand"
-	"strings"
 )
 
 func main() {
@@ -12,7 +11,7 @@ func main() {
 		fmt.Println(i)
 	}
 
-	var fruits = strings.Split("🍏,🍎,🍐,🥑", ",")
+	var fruits = []string{"🍏", "🍎", "🍐", "🥑"}
 	for i := range fruits {
 		fmt.Println(fruits[i])
 	}
@@ -22,10 +21,11 @@ func main() {
 	}
 
 	// no condition will be "infinite" loop
-	for  {
+	for {
 		fmt.Print(".")
 		if rand.Float64() < 0.5 {
 			break
 		}
 	}
+	fruits = append(fruits[:1], fruits[2:]...)
 }
