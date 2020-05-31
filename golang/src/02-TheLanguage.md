@@ -14,9 +14,10 @@ The draft of the language started in 2007 Robert Griesemer, Rob Pike and Ken Tho
  
 **Fun Fact**:
  (maybe not that fun..)  in official go faq website, there are 37 "Why" question, and 13 of them are "Why [...] not" questions... 
- 
- ## Control Structures
- 
+
+## Program structures
+
+### Control Structures
 The syntax of the language doesn't have anything surprising, maybe the only particular thing is the ability to capture declarations also in the if/switch.
 !code(examples/selection.go)
 !code(examples/loops.go)
@@ -37,4 +38,24 @@ Go does not provide implicit conversion between numeric types: [why?](https://go
 
 `string` can contain arbitrary bytes, but in general literal strings almost always contain UTF-8 characters (Go source file must be written in UTF-8). `rune` is "UTF-8 code point", without going too much into the details we can think of a rune a character. [details](https://blog.golang.org/strings).
 
-   
+### Composite types
+- struct
+- pointers
+- data structures:
+    - array
+    - slice
+    - map
+    
+#### Struct And Pointers
+!code(examples/composite_types.go)
+
+#### Array and Slices
+Arrays are fixed length, and it is part of the type. Usually they are not used directly, using `slices` instead.
+!code(examples/array.go) 
+
+### Others
+- functions
+- channels
+- interfaces
+
+

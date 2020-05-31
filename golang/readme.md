@@ -7,7 +7,7 @@ package main
 
 import "fmt"
 
-func main()  {
+func main() {
 	fmt.Print("Hello 🌏")
 }
 ```
@@ -15,28 +15,144 @@ func main()  {
 
 ## HTTP Server
 ```go
-failed to read file to include: open ./src/example/01_http_server.go: no such file or directory```
+package main
+
+import (
+	"log"
+	"net/http"
+)
+
+func main() {
+	addr := ":12345"
+	log.Println("start listening ", addr)
+	http.HandleFunc("/hello", hello)
+	err := http.ListenAndServe(addr, nil)
+	panic(err)
+}
+
+func hello(w http.ResponseWriter, r *http.Request) {
+	log.Printf("request: %s %s", r.Method, r.URL.String())
+	_, err := w.Write([]byte("HELLO!"))
+	if err != nil {
+		log.Print("failed to send response")
+	}
+}
+```
 
 
 ## HTTP Client
 ```go
-failed to read file to include: open ./src/example/01_http_client.go: no such file or directory```
+package main
+
+import (
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"os"
+)
+
+func main() {
+	path := "hello"
+	if len(os.Args) > 1 {
+		path = os.Args[1]
+	}
+	resp, err := http.Get("http://localhost:12345/" + path)
+	if err != nil {
+		log.Printf("failed to send request: %v", err)
+		return
+	}
+	defer resp.Body.Close()
+	content, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("failed to read request body: %v", err)
+		return
+	}
+	fmt.Print(string(content))
+}
+```
 
 
 ## Another HTTP Server
 ```go
-failed to read file to include: open ./src/example/02_http_server.go: no such file or directory```
+package main
+
+import (
+	"encoding/json"
+	"log"
+	"net/http"
+)
+
+type Food struct {
+	Name string
+	Icon string
+}
+
+var menu = []Food{
+	{"Fries", "🍟"},
+	{"Apple", "🍏"},
+	{"Avocado", "🥑"},
+	{"Pizza", "🍕"},
+}
+
+func main() {
+	http.HandleFunc("/menu", Menu)
+	err := http.ListenAndServe(":12345", nil)
+	panic(err)
+}
+
+func Menu(w http.ResponseWriter, r *http.Request) {
+	log.Printf("request: %s %s", r.Method, r.URL.String())
+	err := json.NewEncoder(w).Encode(menu)
+	if err != nil {
+		log.Printf("failed to send response: %v", err)
+	}
+}
+```
 
 
 ## Another HTTP Client
 ```go
-failed to read file to include: open ./src/example/02_http_client.go: no such file or directory```
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+	"net/http"
+	"time"
+)
+
+type Food struct {
+	Name string
+	Icon string
+}
+
+func main() {
+	start := time.Now()
+	defer func() {
+		log.Println("total running time: ", time.Now().Sub(start).Milliseconds(), "ms")
+	}()
+	resp, err := http.Get("http://localhost:12345/menu")
+	if err != nil {
+		log.Printf("failed to send request: %v", err)
+		return
+	}
+	defer resp.Body.Close() // ignoring error
+	var food []Food
+	err = json.NewDecoder(resp.Body).Decode(&food)
+	if err != nil {
+		log.Printf("failed to read request body: %v", err)
+		return
+	}
+	fmt.Println(food)
+}
+```
 
 
 ## CLI Tool
 Let's see a program that allow to process a markdown file and include some source code files as code blocks. The placeholder will be in the at the beginning of a new line with the format `!code(file_name)`
 ```go
-
 package main
 
 import (
@@ -79,7 +195,6 @@ func main() {
 		substituteMap[include] = CodeBlock(tokens[2], string(content))
 	}
 
-
 	var out = string(content)
 	for key, value := range substituteMap {
 		out = regexp.MustCompile(regexp.QuoteMeta(key)).ReplaceAllString(out, value)
@@ -87,7 +202,7 @@ func main() {
 	fmt.Print(out)
 }
 
-func CodeBlock(ext , content string) string {
+func CodeBlock(ext, content string) string {
 	var builder strings.Builder
 	builder.WriteString(fmt.Sprintf("```%s\n", ext))
 	builder.WriteString(content)
@@ -124,9 +239,10 @@ The draft of the language started in 2007 Robert Griesemer, Rob Pike and Ken Tho
  
 **Fun Fact**:
  (maybe not that fun..)  in official go faq website, there are 37 "Why" question, and 13 of them are "Why [...] not" questions... 
- 
- ## Control Structures
- 
+
+## Program structures
+
+### Control Structures
 The syntax of the language doesn't have anything surprising, maybe the only particular thing is the ability to capture declarations also in the if/switch.
 ```go
 package main
@@ -154,7 +270,7 @@ func main() {
 	// note that a declaration would not compile since the type of rnd id float64
 	// rnd := rand.Int()
 
-	switch rnd := rand.Int(); rnd%2 {
+	switch rnd := rand.Int(); rnd % 2 {
 	case 0:
 		fmt.Printf("%d is even", rnd)
 	case 1:
@@ -216,4 +332,137 @@ Go does not provide implicit conversion between numeric types: [why?](https://go
 
 `string` can contain arbitrary bytes, but in general literal strings almost always contain UTF-8 characters (Go source file must be written in UTF-8). `rune` is "UTF-8 code point", without going too much into the details we can think of a rune a character. [details](https://blog.golang.org/strings).
 
-   
+### Composite types
+- struct
+- pointers
+- data structures:
+    - array
+    - slice
+    - map
+    
+#### Struct And Pointers
+```go
+package main
+
+import "fmt"
+
+type drink struct {
+	name string
+	icon string
+}
+
+func (f *drink) AddIce() {
+	fmt.Printf("adding ice to %s\n", f.name)
+	f.name = "iced " + f.name
+	f.icon += "\U0001F9CA"
+}
+
+func (f drink) AddStones() drink {
+	fmt.Printf("adding stones to %s\n", f.name)
+	f.name = "classy " + f.name
+	f.icon += "\U0001F94C"
+	return f
+}
+
+func main() {
+	// define a new struct / variable
+	var beer struct {
+		name string
+		icon string
+	}
+	// declaration initialize the variable to "all zero values"
+	fmt.Println(beer)
+
+	beer.name = "beer"
+	beer.icon = "🍺"
+	// using custom types
+	whiskey := drink{name: "whiskey", icon: "🥃"}
+
+	coffee := drink{
+		name: "coffee",
+		icon: "☕️",
+	}
+	fmt.Println(beer, whiskey, coffee)
+
+	coffee.AddIce() // note: add ice wants a pointer, but the compiler help to easy the syntax and it is possible to call it on a struct
+	newWhiskey := whiskey.AddStones()
+	fmt.Println(coffee, whiskey, newWhiskey)
+
+	//same syntax sugar works also in the other way
+	var lastWhiskey *drink = &whiskey
+	anotherOne := lastWhiskey.AddStones()
+	lastWhiskey.AddIce()
+	fmt.Println(whiskey, lastWhiskey, anotherOne)
+
+	// remember that beer is not defined as drink?
+	// beer.AddIce() does not compile!
+	var lastOne drink = beer // The compiler check that the conversion is safe!
+	lastOne.AddIce()         // btw: are you sure you want to do that?!?!?
+	fmt.Println(beer, lastOne)
+}
+```
+
+
+#### Array and Slices
+Arrays are fixed length, and it is part of the type. Usually they are not used directly, using `slices` instead.
+```go
+package main
+
+import (
+	"fmt"
+	"sort"
+)
+
+func main() {
+	var a [3]int
+	var b = [3]int{0, 10, 0}
+	fmt.Println(a, b, a == b)
+	a[1] = 10
+	// if the elements are comparable the array is comparable to!
+	fmt.Println(a, b, a == b)
+	var clone = a
+	clone[1] = 21
+	fmt.Println(a, clone)
+
+	//sort.Ints(a) -> cannot use 'a' (type [3]int) as type []int: which is a slice of integer
+
+	// a slice give access to a subsequence (or all) elements of the so called underlying array
+	var c []int = a[:]
+	fmt.Println(c, len(c), cap(c)) // capacity is the size of the underlying array
+
+	c[1] = 22 // `a` is the underlying array for `c`
+	fmt.Println(a, c)
+	//fmt.Println(c == a) -> c == a (mismatched types []int and [3]int)
+
+	c = append(c, 1, 2, 3, 4, 5, 6, 7, 8) // add some elements
+	sort.Ints(c)
+	fmt.Println("c:", c, len(c), cap(c))
+
+	// what is the relationship between d and c underlying array?
+	d := append(c, 100)
+	d[1] = 1234
+	fmt.Println("c:", c, len(c), cap(c))
+	fmt.Println("d:", d, len(d), cap(d)) // here it is the same!
+	// fmt.Println(c == d) //Invalid operation: c == d (operator == is not defined on []int)
+
+	d = append(c, 100, 200, 300)
+	d[1] = 1234
+	fmt.Println("c:", c, len(c), cap(c))
+	fmt.Println("d:", d, len(d), cap(d)) // here is not!
+	// no assumptions about what append return!
+
+	// standard library is not very rich of methods...
+	// IDE can help with snippets, for instance for a remove operation it suggest:
+	fmt.Println("d:", d, len(d), cap(d))
+	d = append(d[:4], d[5:]...)
+	fmt.Println("d:", d, len(d), cap(d))
+}
+```
+ 
+
+### Others
+- functions
+- channels
+- interfaces
+
+
