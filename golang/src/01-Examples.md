@@ -5,16 +5,16 @@ Before starting to dive into the language let's give a look to some simple progr
 !code(examples/hello.go)
 
 ## HTTP Server
-!code(example/01_http_server.go)
+!code(examples/01_http_server.go)
 
 ## HTTP Client
-!code(example/01_http_client.go)
+!code(examples/01_http_client.go)
 
 ## Another HTTP Server
-!code(example/02_http_server.go)
+!code(examples/02_http_server.go)
 
 ## Another HTTP Client
-!code(example/02_http_client.go)
+!code(examples/02_http_client.go)
 
 ## CLI Tool
 Let's see a program that allow to process a markdown file and include some source code files as code blocks. The placeholder will be in the at the beginning of a new line with the format `!code(file_name)`

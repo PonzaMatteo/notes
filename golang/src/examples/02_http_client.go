@@ -13,7 +13,7 @@ type Food struct {
 	Icon string
 }
 
-func main()  {
+func main() {
 	start := time.Now()
 	defer func() {
 		log.Println("total running time: ", time.Now().Sub(start).Milliseconds(), "ms")

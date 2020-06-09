@@ -1,7 +1,7 @@
 # The Language
 
 ## Brief History 
-The draft of the language started in 2007 Robert Griesemer, Rob Pike and Ken Thompson and became an open source project in 2009. What is the purpose of the project?
+The draft of the language started in 2007 by Robert Griesemer, Rob Pike and Ken Thompson and became an open source project in 2009. What is the purpose of the project?
 > Go was born out of frustration with existing languages and environments for the work we were doing at Google. Programming had become too difficult and the choice of languages was partly to blame. One had to choose either efficient compilation, efficient execution, or ease of programming; all three were not available in the same mainstream language. 
 
 > Go addressed these issues by attempting to combine the **ease** of programming of an interpreted, dynamically typed language with the **efficiency** and **safety** of a statically typed, compiled language. It also aimed to be modern, with **support for networked and multicore computing**. Finally, working with Go is intended to be **fast**: it should take at most a few seconds to build a large executable on a single computer. 
@@ -18,7 +18,7 @@ The draft of the language started in 2007 Robert Griesemer, Rob Pike and Ken Tho
 ## Program structures
 
 ### Control Structures
-The syntax of the language doesn't have anything surprising, maybe the only particular thing is the ability to capture declarations also in the if/switch.
+The syntax of the language doesn't have anything surprising, maybe unusual feature is the ability to capture declarations also in the if/switch.
 !code(examples/selection.go)
 !code(examples/loops.go)
 
@@ -53,8 +53,13 @@ Go does not provide implicit conversion between numeric types: [why?](https://go
 Arrays are fixed length, and it is part of the type. Usually they are not used directly, using `slices` instead.
 !code(examples/array.go) 
 
-### Others
-- functions
+### Other Types
+ 
+#### Functions
+Functions are first class values 
+!code(examples/first_class_functions.go) 
+
+- (Do Not Fear First Class Functions)[https://dave.cheney.net/2016/11/13/do-not-fear-first-class-functions]
 - channels
 - interfaces
 

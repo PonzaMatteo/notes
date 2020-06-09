@@ -27,7 +27,7 @@ func main() {
 func Menu(w http.ResponseWriter, r *http.Request) {
 	log.Printf("request: %s %s", r.Method, r.URL.String())
 	err := json.NewEncoder(w).Encode(menu)
-	if err != nil{
+	if err != nil {
 		log.Printf("failed to send response: %v", err)
 	}
 }

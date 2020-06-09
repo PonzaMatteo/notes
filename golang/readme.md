@@ -226,7 +226,7 @@ func Input(fileName *string) (io.ReadCloser, error) {
 # The Language
 
 ## Brief History 
-The draft of the language started in 2007 Robert Griesemer, Rob Pike and Ken Thompson and became an open source project in 2009. What is the purpose of the project?
+The draft of the language started in 2007 by Robert Griesemer, Rob Pike and Ken Thompson and became an open source project in 2009. What is the purpose of the project?
 > Go was born out of frustration with existing languages and environments for the work we were doing at Google. Programming had become too difficult and the choice of languages was partly to blame. One had to choose either efficient compilation, efficient execution, or ease of programming; all three were not available in the same mainstream language. 
 
 > Go addressed these issues by attempting to combine the **ease** of programming of an interpreted, dynamically typed language with the **efficiency** and **safety** of a statically typed, compiled language. It also aimed to be modern, with **support for networked and multicore computing**. Finally, working with Go is intended to be **fast**: it should take at most a few seconds to build a large executable on a single computer. 
@@ -243,7 +243,7 @@ The draft of the language started in 2007 Robert Griesemer, Rob Pike and Ken Tho
 ## Program structures
 
 ### Control Structures
-The syntax of the language doesn't have anything surprising, maybe the only particular thing is the ability to capture declarations also in the if/switch.
+The syntax of the language doesn't have anything surprising, maybe unusual feature is the ability to capture declarations also in the if/switch.
 ```go
 package main
 
@@ -460,8 +460,93 @@ func main() {
 ```
  
 
-### Others
-- functions
+### Other Types
+ 
+#### Functions
+Functions are first class values 
+```go
+package main
+
+import (
+	"fmt"
+)
+
+func main() {
+	// functions / closures can be stored in variables
+	greet := func(name string) {
+		fmt.Println("Hello", name, "!")
+	}
+	greet("🌍")
+	fmt.Printf("%T\n", greet)
+
+	// deferring the call to an anonymous function
+	defer func() {
+		fmt.Println("This will be executed before returning")
+	}()
+
+	//
+	fmt.Printf("%+v\n", CanIHaveACoffeePlease(Cappuccino()))
+	fmt.Printf("%+v\n", CanIHaveACoffeePlease(Espresso(), Lungo))
+	fmt.Printf("%+v\n", CanIHaveACoffeePlease(Espresso(), Double, InBigCup(), Iced()))
+
+}
+
+func CanIHaveACoffeePlease(coffee Coffee, options ...CoffeeOption) Coffee {
+	for _, option := range options {
+		coffee = option(coffee)
+	}
+	return coffee
+}
+
+type (
+	CoffeeOption func(coffee Coffee) Coffee
+	Coffee       struct {
+		Cup    string
+		Coffee float32
+		Extra  []string
+		Ice    bool
+	}
+)
+
+func Espresso() Coffee {
+	var coffee Coffee
+	coffee.Coffee = 30.0
+	coffee.Cup = "half cup"
+	return coffee
+}
+func Lungo(coffee Coffee) Coffee {
+	coffee.Coffee *= 1.5
+	return coffee
+}
+func Double(coffee Coffee) Coffee {
+	coffee.Coffee *= 2.0
+	return coffee
+}
+func Cappuccino() Coffee {
+	return CanIHaveACoffeePlease(Espresso(), WithMilk(125), InBigCup())
+}
+func Iced() CoffeeOption {
+	return func(coffee Coffee) Coffee {
+		coffee.Ice = true
+		return coffee
+	}
+}
+func WithMilk(ml float32) CoffeeOption {
+	return func(coffee Coffee) Coffee {
+		coffee.Extra = append(coffee.Extra, fmt.Sprintf("%v of Milk", ml))
+		return coffee
+	}
+}
+func InBigCup() CoffeeOption {
+	return func(coffee Coffee) Coffee {
+		coffee.Cup = "big cup"
+		return coffee
+	}
+}
+```
+ 
+
+- (Do Not Fear First Class Functions)[https://dave.cheney.net/2016/11/13/do-not-fear-first-class-functions]
 - channels
 - interfaces
 

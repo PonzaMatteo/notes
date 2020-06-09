@@ -23,7 +23,7 @@ func main() {
 	// note that a declaration would not compile since the type of rnd id float64
 	// rnd := rand.Int()
 
-	switch rnd := rand.Int(); rnd%2 {
+	switch rnd := rand.Int(); rnd % 2 {
 	case 0:
 		fmt.Printf("%d is even", rnd)
 	case 1:

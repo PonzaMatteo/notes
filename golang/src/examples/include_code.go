@@ -1,4 +1,3 @@
-
 package main
 
 import (
@@ -41,7 +40,6 @@ func main() {
 		substituteMap[include] = CodeBlock(tokens[2], string(content))
 	}
 
-
 	var out = string(content)
 	for key, value := range substituteMap {
 		out = regexp.MustCompile(regexp.QuoteMeta(key)).ReplaceAllString(out, value)
@@ -49,7 +47,7 @@ func main() {
 	fmt.Print(out)
 }
 
-func CodeBlock(ext , content string) string {
+func CodeBlock(ext, content string) string {
 	var builder strings.Builder
 	builder.WriteString(fmt.Sprintf("```%s\n", ext))
 	builder.WriteString(content)

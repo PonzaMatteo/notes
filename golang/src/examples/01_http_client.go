@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-func main()  {
+func main() {
 	path := "hello"
 	if len(os.Args) > 1 {
 		path = os.Args[1]
