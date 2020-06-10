@@ -461,6 +461,9 @@ func main() {
  
 
 ### Other Types
+ - functions
+ - channels
+ - interfaces
  
 #### Functions
 Functions are first class values 
@@ -547,7 +550,51 @@ func InBigCup() CoffeeOption {
  
 
 - (Do Not Fear First Class Functions)[https://dave.cheney.net/2016/11/13/do-not-fear-first-class-functions]
-- channels
-- interfaces
+
+#### Interfaces
+
+Go takes an unusual approach to interfaces, they are **satisfied implicitly**. So we don't declare which interfaces as type implements, we just implement the methods.
+Include example for:
+- basic usage
+- embedding
+- type as couple
+- writer / reader flexibility
+
+# Object Oriented Programming
+
+So far we learned how to declare new types and how to declare methods for them.
+Go support the mechanisms of OOP in unusual and opinionated way:
+
+## Encapsulation
+
+```go
+package pkg
+
+// the type is exported
+type Foo struct {
+	// Capitalized field: it is exported
+	Exported int
+	// field is not visible out of main package
+	private int
+}
+func IsPublic()    {}
+func isNotPublic() {}
+```
 
 
+```go
+package main
+
+import (
+	"examples/pkg"
+	"fmt"
+)
+
+func main() {
+	var foo = pkg.Foo{Exported: 1}
+	// foo.private -> Unexported field 'private' usage
+	fmt.Println(foo)
+	pkg.IsPublic()
+	// ext.isNotPublic() -> Unexported function 'isNotPublic' usage
+}
+```

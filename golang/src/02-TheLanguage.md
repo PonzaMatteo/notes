@@ -54,13 +54,22 @@ Arrays are fixed length, and it is part of the type. Usually they are not used d
 !code(examples/array.go) 
 
 ### Other Types
+ - functions
+ - channels
+ - interfaces
  
 #### Functions
 Functions are first class values 
 !code(examples/first_class_functions.go) 
 
 - (Do Not Fear First Class Functions)[https://dave.cheney.net/2016/11/13/do-not-fear-first-class-functions]
-- channels
-- interfaces
 
+#### Interfaces
+
+Go takes an unusual approach to interfaces, they are **satisfied implicitly**. So we don't declare which interfaces as type implements, we just implement the methods.
+Include example for:
+- basic usage
+- embedding
+- type as couple
+- writer / reader flexibility
 
