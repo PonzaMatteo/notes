@@ -1,14 +1,14 @@
 package main
 
 import (
-	"examples/pkg"
+	"examples/oop"
 	"fmt"
 )
 
 func main() {
-	var foo = pkg.Foo{Exported: 1}
+	var foo = oop.Foo{Exported: 1}
 	// foo.private -> Unexported field 'private' usage
 	fmt.Println(foo)
-	pkg.IsPublic()
+	oop.IsPublic()
 	// ext.isNotPublic() -> Unexported function 'isNotPublic' usage
 }

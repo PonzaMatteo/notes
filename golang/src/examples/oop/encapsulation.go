@@ -1,4 +1,4 @@
-package pkg
+package oop
 
 // the type is exported
 type Foo struct {

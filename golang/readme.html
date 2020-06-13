@@ -1,0 +1,612 @@
+<h1 id="some-examples">01 - Some Examples</h1>
+<p>Before starting to dive into the language let’s give a look to some simple program.</p>
+<h2 id="hello-world">Hello World</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode go"><code class="sourceCode go"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">package</span> main</span>
+<span id="cb1-2"><a href="#cb1-2"></a></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="kw">import</span> <span class="st">&quot;fmt&quot;</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="kw">func</span> main() {</span>
+<span id="cb1-6"><a href="#cb1-6"></a>    fmt.Print(<span class="st">&quot;Hello 🌏&quot;</span>)</span>
+<span id="cb1-7"><a href="#cb1-7"></a>}</span></code></pre></div>
+<h2 id="http-server">HTTP Server</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode go"><code class="sourceCode go"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">package</span> main</span>
+<span id="cb2-2"><a href="#cb2-2"></a></span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="kw">import</span> (</span>
+<span id="cb2-4"><a href="#cb2-4"></a>    <span class="st">&quot;log&quot;</span></span>
+<span id="cb2-5"><a href="#cb2-5"></a>    <span class="st">&quot;net/http&quot;</span></span>
+<span id="cb2-6"><a href="#cb2-6"></a>)</span>
+<span id="cb2-7"><a href="#cb2-7"></a></span>
+<span id="cb2-8"><a href="#cb2-8"></a><span class="kw">func</span> main() {</span>
+<span id="cb2-9"><a href="#cb2-9"></a>    addr := <span class="st">&quot;:12345&quot;</span></span>
+<span id="cb2-10"><a href="#cb2-10"></a>    log.Println(<span class="st">&quot;start listening &quot;</span>, addr)</span>
+<span id="cb2-11"><a href="#cb2-11"></a>    http.HandleFunc(<span class="st">&quot;/hello&quot;</span>, hello)</span>
+<span id="cb2-12"><a href="#cb2-12"></a>    err := http.ListenAndServe(addr, <span class="ot">nil</span>)</span>
+<span id="cb2-13"><a href="#cb2-13"></a>    <span class="bu">panic</span>(err)</span>
+<span id="cb2-14"><a href="#cb2-14"></a>}</span>
+<span id="cb2-15"><a href="#cb2-15"></a></span>
+<span id="cb2-16"><a href="#cb2-16"></a><span class="kw">func</span> hello(w http.ResponseWriter, r *http.Request) {</span>
+<span id="cb2-17"><a href="#cb2-17"></a>    log.Printf(<span class="st">&quot;request: %s %s&quot;</span>, r.Method, r.URL.String())</span>
+<span id="cb2-18"><a href="#cb2-18"></a>    _, err := w.Write([]<span class="dt">byte</span>(<span class="st">&quot;HELLO!&quot;</span>))</span>
+<span id="cb2-19"><a href="#cb2-19"></a>    <span class="kw">if</span> err != <span class="ot">nil</span> {</span>
+<span id="cb2-20"><a href="#cb2-20"></a>        log.Print(<span class="st">&quot;failed to send response&quot;</span>)</span>
+<span id="cb2-21"><a href="#cb2-21"></a>    }</span>
+<span id="cb2-22"><a href="#cb2-22"></a>}</span></code></pre></div>
+<h2 id="http-client">HTTP Client</h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode go"><code class="sourceCode go"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">package</span> main</span>
+<span id="cb3-2"><a href="#cb3-2"></a></span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="kw">import</span> (</span>
+<span id="cb3-4"><a href="#cb3-4"></a>    <span class="st">&quot;fmt&quot;</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a>    <span class="st">&quot;io/ioutil&quot;</span></span>
+<span id="cb3-6"><a href="#cb3-6"></a>    <span class="st">&quot;log&quot;</span></span>
+<span id="cb3-7"><a href="#cb3-7"></a>    <span class="st">&quot;net/http&quot;</span></span>
+<span id="cb3-8"><a href="#cb3-8"></a>    <span class="st">&quot;os&quot;</span></span>
+<span id="cb3-9"><a href="#cb3-9"></a>)</span>
+<span id="cb3-10"><a href="#cb3-10"></a></span>
+<span id="cb3-11"><a href="#cb3-11"></a><span class="kw">func</span> main() {</span>
+<span id="cb3-12"><a href="#cb3-12"></a>    path := <span class="st">&quot;hello&quot;</span></span>
+<span id="cb3-13"><a href="#cb3-13"></a>    <span class="kw">if</span> <span class="bu">len</span>(os.Args) &gt; <span class="dv">1</span> {</span>
+<span id="cb3-14"><a href="#cb3-14"></a>        path = os.Args[<span class="dv">1</span>]</span>
+<span id="cb3-15"><a href="#cb3-15"></a>    }</span>
+<span id="cb3-16"><a href="#cb3-16"></a>    resp, err := http.Get(<span class="st">&quot;http://localhost:12345/&quot;</span> + path)</span>
+<span id="cb3-17"><a href="#cb3-17"></a>    <span class="kw">if</span> err != <span class="ot">nil</span> {</span>
+<span id="cb3-18"><a href="#cb3-18"></a>        log.Printf(<span class="st">&quot;failed to send request: %v&quot;</span>, err)</span>
+<span id="cb3-19"><a href="#cb3-19"></a>        <span class="kw">return</span></span>
+<span id="cb3-20"><a href="#cb3-20"></a>    }</span>
+<span id="cb3-21"><a href="#cb3-21"></a>    <span class="kw">defer</span> resp.Body.Close()</span>
+<span id="cb3-22"><a href="#cb3-22"></a>    content, err := ioutil.ReadAll(resp.Body)</span>
+<span id="cb3-23"><a href="#cb3-23"></a>    <span class="kw">if</span> err != <span class="ot">nil</span> {</span>
+<span id="cb3-24"><a href="#cb3-24"></a>        log.Printf(<span class="st">&quot;failed to read request body: %v&quot;</span>, err)</span>
+<span id="cb3-25"><a href="#cb3-25"></a>        <span class="kw">return</span></span>
+<span id="cb3-26"><a href="#cb3-26"></a>    }</span>
+<span id="cb3-27"><a href="#cb3-27"></a>    fmt.Print(<span class="dt">string</span>(content))</span>
+<span id="cb3-28"><a href="#cb3-28"></a>}</span></code></pre></div>
+<h2 id="another-http-server">Another HTTP Server</h2>
+<div class="sourceCode" id="cb4"><pre class="sourceCode go"><code class="sourceCode go"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">package</span> main</span>
+<span id="cb4-2"><a href="#cb4-2"></a></span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="kw">import</span> (</span>
+<span id="cb4-4"><a href="#cb4-4"></a>    <span class="st">&quot;encoding/json&quot;</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a>    <span class="st">&quot;log&quot;</span></span>
+<span id="cb4-6"><a href="#cb4-6"></a>    <span class="st">&quot;net/http&quot;</span></span>
+<span id="cb4-7"><a href="#cb4-7"></a>)</span>
+<span id="cb4-8"><a href="#cb4-8"></a></span>
+<span id="cb4-9"><a href="#cb4-9"></a><span class="kw">type</span> Food <span class="kw">struct</span> {</span>
+<span id="cb4-10"><a href="#cb4-10"></a>    Name <span class="dt">string</span></span>
+<span id="cb4-11"><a href="#cb4-11"></a>    Icon <span class="dt">string</span></span>
+<span id="cb4-12"><a href="#cb4-12"></a>}</span>
+<span id="cb4-13"><a href="#cb4-13"></a></span>
+<span id="cb4-14"><a href="#cb4-14"></a><span class="kw">var</span> menu = []Food{</span>
+<span id="cb4-15"><a href="#cb4-15"></a>    {<span class="st">&quot;Fries&quot;</span>, <span class="st">&quot;🍟&quot;</span>},</span>
+<span id="cb4-16"><a href="#cb4-16"></a>    {<span class="st">&quot;Apple&quot;</span>, <span class="st">&quot;🍏&quot;</span>},</span>
+<span id="cb4-17"><a href="#cb4-17"></a>    {<span class="st">&quot;Avocado&quot;</span>, <span class="st">&quot;🥑&quot;</span>},</span>
+<span id="cb4-18"><a href="#cb4-18"></a>    {<span class="st">&quot;Pizza&quot;</span>, <span class="st">&quot;🍕&quot;</span>},</span>
+<span id="cb4-19"><a href="#cb4-19"></a>}</span>
+<span id="cb4-20"><a href="#cb4-20"></a></span>
+<span id="cb4-21"><a href="#cb4-21"></a><span class="kw">func</span> main() {</span>
+<span id="cb4-22"><a href="#cb4-22"></a>    http.HandleFunc(<span class="st">&quot;/menu&quot;</span>, Menu)</span>
+<span id="cb4-23"><a href="#cb4-23"></a>    err := http.ListenAndServe(<span class="st">&quot;:12345&quot;</span>, <span class="ot">nil</span>)</span>
+<span id="cb4-24"><a href="#cb4-24"></a>    <span class="bu">panic</span>(err)</span>
+<span id="cb4-25"><a href="#cb4-25"></a>}</span>
+<span id="cb4-26"><a href="#cb4-26"></a></span>
+<span id="cb4-27"><a href="#cb4-27"></a><span class="kw">func</span> Menu(w http.ResponseWriter, r *http.Request) {</span>
+<span id="cb4-28"><a href="#cb4-28"></a>    log.Printf(<span class="st">&quot;request: %s %s&quot;</span>, r.Method, r.URL.String())</span>
+<span id="cb4-29"><a href="#cb4-29"></a>    err := json.NewEncoder(w).Encode(menu)</span>
+<span id="cb4-30"><a href="#cb4-30"></a>    <span class="kw">if</span> err != <span class="ot">nil</span> {</span>
+<span id="cb4-31"><a href="#cb4-31"></a>        log.Printf(<span class="st">&quot;failed to send response: %v&quot;</span>, err)</span>
+<span id="cb4-32"><a href="#cb4-32"></a>    }</span>
+<span id="cb4-33"><a href="#cb4-33"></a>}</span></code></pre></div>
+<h2 id="another-http-client">Another HTTP Client</h2>
+<div class="sourceCode" id="cb5"><pre class="sourceCode go"><code class="sourceCode go"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">package</span> main</span>
+<span id="cb5-2"><a href="#cb5-2"></a></span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="kw">import</span> (</span>
+<span id="cb5-4"><a href="#cb5-4"></a>    <span class="st">&quot;encoding/json&quot;</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a>    <span class="st">&quot;fmt&quot;</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a>    <span class="st">&quot;log&quot;</span></span>
+<span id="cb5-7"><a href="#cb5-7"></a>    <span class="st">&quot;net/http&quot;</span></span>
+<span id="cb5-8"><a href="#cb5-8"></a>    <span class="st">&quot;time&quot;</span></span>
+<span id="cb5-9"><a href="#cb5-9"></a>)</span>
+<span id="cb5-10"><a href="#cb5-10"></a></span>
+<span id="cb5-11"><a href="#cb5-11"></a><span class="kw">type</span> Food <span class="kw">struct</span> {</span>
+<span id="cb5-12"><a href="#cb5-12"></a>    Name <span class="dt">string</span></span>
+<span id="cb5-13"><a href="#cb5-13"></a>    Icon <span class="dt">string</span></span>
+<span id="cb5-14"><a href="#cb5-14"></a>}</span>
+<span id="cb5-15"><a href="#cb5-15"></a></span>
+<span id="cb5-16"><a href="#cb5-16"></a><span class="kw">func</span> main() {</span>
+<span id="cb5-17"><a href="#cb5-17"></a>    start := time.Now()</span>
+<span id="cb5-18"><a href="#cb5-18"></a>    <span class="kw">defer</span> <span class="kw">func</span>() {</span>
+<span id="cb5-19"><a href="#cb5-19"></a>        log.Println(<span class="st">&quot;total running time: &quot;</span>, time.Now().Sub(start).Milliseconds(), <span class="st">&quot;ms&quot;</span>)</span>
+<span id="cb5-20"><a href="#cb5-20"></a>    }()</span>
+<span id="cb5-21"><a href="#cb5-21"></a>    resp, err := http.Get(<span class="st">&quot;http://localhost:12345/menu&quot;</span>)</span>
+<span id="cb5-22"><a href="#cb5-22"></a>    <span class="kw">if</span> err != <span class="ot">nil</span> {</span>
+<span id="cb5-23"><a href="#cb5-23"></a>        log.Printf(<span class="st">&quot;failed to send request: %v&quot;</span>, err)</span>
+<span id="cb5-24"><a href="#cb5-24"></a>        <span class="kw">return</span></span>
+<span id="cb5-25"><a href="#cb5-25"></a>    }</span>
+<span id="cb5-26"><a href="#cb5-26"></a>    <span class="kw">defer</span> resp.Body.Close() <span class="co">// ignoring error</span></span>
+<span id="cb5-27"><a href="#cb5-27"></a>    <span class="kw">var</span> food []Food</span>
+<span id="cb5-28"><a href="#cb5-28"></a>    err = json.NewDecoder(resp.Body).Decode(&amp;food)</span>
+<span id="cb5-29"><a href="#cb5-29"></a>    <span class="kw">if</span> err != <span class="ot">nil</span> {</span>
+<span id="cb5-30"><a href="#cb5-30"></a>        log.Printf(<span class="st">&quot;failed to read request body: %v&quot;</span>, err)</span>
+<span id="cb5-31"><a href="#cb5-31"></a>        <span class="kw">return</span></span>
+<span id="cb5-32"><a href="#cb5-32"></a>    }</span>
+<span id="cb5-33"><a href="#cb5-33"></a>    fmt.Println(food)</span>
+<span id="cb5-34"><a href="#cb5-34"></a>}</span></code></pre></div>
+<h2 id="cli-tool">CLI Tool</h2>
+<p>Let’s see a program that allow to process a markdown file and include some source code files as code blocks. The placeholder will be in the at the beginning of a new line with the format <code>!code(file_name)</code></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode go"><code class="sourceCode go"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw">package</span> main</span>
+<span id="cb6-2"><a href="#cb6-2"></a></span>
+<span id="cb6-3"><a href="#cb6-3"></a><span class="kw">import</span> (</span>
+<span id="cb6-4"><a href="#cb6-4"></a>    <span class="st">&quot;flag&quot;</span></span>
+<span id="cb6-5"><a href="#cb6-5"></a>    <span class="st">&quot;fmt&quot;</span></span>
+<span id="cb6-6"><a href="#cb6-6"></a>    <span class="st">&quot;io&quot;</span></span>
+<span id="cb6-7"><a href="#cb6-7"></a>    <span class="st">&quot;io/ioutil&quot;</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a>    <span class="st">&quot;log&quot;</span></span>
+<span id="cb6-9"><a href="#cb6-9"></a>    <span class="st">&quot;os&quot;</span></span>
+<span id="cb6-10"><a href="#cb6-10"></a>    <span class="st">&quot;regexp&quot;</span></span>
+<span id="cb6-11"><a href="#cb6-11"></a>    <span class="st">&quot;strings&quot;</span></span>
+<span id="cb6-12"><a href="#cb6-12"></a>)</span>
+<span id="cb6-13"><a href="#cb6-13"></a></span>
+<span id="cb6-14"><a href="#cb6-14"></a><span class="kw">var</span> fileName = flag.String(<span class="st">&quot;i&quot;</span>, <span class="st">&quot;&quot;</span>, <span class="st">&quot;name of the input file&quot;</span>)</span>
+<span id="cb6-15"><a href="#cb6-15"></a><span class="kw">var</span> srcDir = flag.String(<span class="st">&quot;d&quot;</span>, <span class="st">&quot;./&quot;</span>, <span class="st">&quot;directory where to look for the source code examples&quot;</span>)</span>
+<span id="cb6-16"><a href="#cb6-16"></a></span>
+<span id="cb6-17"><a href="#cb6-17"></a><span class="kw">func</span> main() {</span>
+<span id="cb6-18"><a href="#cb6-18"></a>    flag.Parse()</span>
+<span id="cb6-19"><a href="#cb6-19"></a>    input, err := Input(fileName)</span>
+<span id="cb6-20"><a href="#cb6-20"></a>    <span class="kw">if</span> err != <span class="ot">nil</span> {</span>
+<span id="cb6-21"><a href="#cb6-21"></a>        log.Fatal(err)</span>
+<span id="cb6-22"><a href="#cb6-22"></a>    }</span>
+<span id="cb6-23"><a href="#cb6-23"></a>    <span class="kw">defer</span> input.Close()</span>
+<span id="cb6-24"><a href="#cb6-24"></a>    content, err := ioutil.ReadAll(input)</span>
+<span id="cb6-25"><a href="#cb6-25"></a>    <span class="kw">if</span> err != <span class="ot">nil</span> {</span>
+<span id="cb6-26"><a href="#cb6-26"></a>        log.Fatal(err)</span>
+<span id="cb6-27"><a href="#cb6-27"></a>    }</span>
+<span id="cb6-28"><a href="#cb6-28"></a></span>
+<span id="cb6-29"><a href="#cb6-29"></a>    codePattern := regexp.MustCompile(<span class="st">&quot;!code</span><span class="ch">\\</span><span class="st">((.*</span><span class="ch">\\</span><span class="st">..*)</span><span class="ch">\\</span><span class="st">)&quot;</span>)</span>
+<span id="cb6-30"><a href="#cb6-30"></a>    filePattern := regexp.MustCompile(<span class="st">&quot;</span><span class="ch">\\</span><span class="st">((.*)</span><span class="ch">\\</span><span class="st">.(.*)</span><span class="ch">\\</span><span class="st">)&quot;</span>)</span>
+<span id="cb6-31"><a href="#cb6-31"></a>    includes := codePattern.FindAllString(<span class="dt">string</span>(content), <span class="dv">-1</span>)</span>
+<span id="cb6-32"><a href="#cb6-32"></a>    <span class="kw">var</span> substituteMap = <span class="bu">make</span>(<span class="kw">map</span>[<span class="dt">string</span>]<span class="dt">string</span>)</span>
+<span id="cb6-33"><a href="#cb6-33"></a>    <span class="kw">for</span> _, include := <span class="kw">range</span> includes {</span>
+<span id="cb6-34"><a href="#cb6-34"></a>        tokens := filePattern.FindStringSubmatch(include)</span>
+<span id="cb6-35"><a href="#cb6-35"></a>        fileName := fmt.Sprintf(<span class="st">&quot;%s.%s&quot;</span>, tokens[<span class="dv">1</span>], tokens[<span class="dv">2</span>])</span>
+<span id="cb6-36"><a href="#cb6-36"></a>        content, err := ioutil.ReadFile(*srcDir + fileName)</span>
+<span id="cb6-37"><a href="#cb6-37"></a>        <span class="kw">if</span> err != <span class="ot">nil</span> {</span>
+<span id="cb6-38"><a href="#cb6-38"></a>            content = []<span class="dt">byte</span>(<span class="st">&quot;failed to read file to include: &quot;</span> + err.Error())</span>
+<span id="cb6-39"><a href="#cb6-39"></a>        }</span>
+<span id="cb6-40"><a href="#cb6-40"></a>        substituteMap[include] = CodeBlock(tokens[<span class="dv">2</span>], <span class="dt">string</span>(content))</span>
+<span id="cb6-41"><a href="#cb6-41"></a>    }</span>
+<span id="cb6-42"><a href="#cb6-42"></a></span>
+<span id="cb6-43"><a href="#cb6-43"></a>    <span class="kw">var</span> out = <span class="dt">string</span>(content)</span>
+<span id="cb6-44"><a href="#cb6-44"></a>    <span class="kw">for</span> key, value := <span class="kw">range</span> substituteMap {</span>
+<span id="cb6-45"><a href="#cb6-45"></a>        out = regexp.MustCompile(regexp.QuoteMeta(key)).ReplaceAllString(out, value)</span>
+<span id="cb6-46"><a href="#cb6-46"></a>    }</span>
+<span id="cb6-47"><a href="#cb6-47"></a>    fmt.Print(out)</span>
+<span id="cb6-48"><a href="#cb6-48"></a>}</span>
+<span id="cb6-49"><a href="#cb6-49"></a></span>
+<span id="cb6-50"><a href="#cb6-50"></a><span class="kw">func</span> CodeBlock(ext, content <span class="dt">string</span>) <span class="dt">string</span> {</span>
+<span id="cb6-51"><a href="#cb6-51"></a>    <span class="kw">var</span> builder strings.Builder</span>
+<span id="cb6-52"><a href="#cb6-52"></a>    builder.WriteString(fmt.Sprintf(<span class="st">&quot;```%s</span><span class="ch">\n</span><span class="st">&quot;</span>, ext))</span>
+<span id="cb6-53"><a href="#cb6-53"></a>    builder.WriteString(content)</span>
+<span id="cb6-54"><a href="#cb6-54"></a>    builder.WriteString(fmt.Sprintf(<span class="st">&quot;```</span><span class="ch">\n</span><span class="st">&quot;</span>))</span>
+<span id="cb6-55"><a href="#cb6-55"></a>    <span class="kw">return</span> builder.String()</span>
+<span id="cb6-56"><a href="#cb6-56"></a>}</span>
+<span id="cb6-57"><a href="#cb6-57"></a></span>
+<span id="cb6-58"><a href="#cb6-58"></a><span class="kw">func</span> Input(fileName *<span class="dt">string</span>) (io.ReadCloser, <span class="dt">error</span>) {</span>
+<span id="cb6-59"><a href="#cb6-59"></a>    <span class="kw">if</span> fileName != <span class="ot">nil</span> &amp;&amp; *fileName != <span class="st">&quot;&quot;</span> {</span>
+<span id="cb6-60"><a href="#cb6-60"></a>        input, err := os.Open(*fileName)</span>
+<span id="cb6-61"><a href="#cb6-61"></a>        <span class="kw">if</span> err != <span class="ot">nil</span> {</span>
+<span id="cb6-62"><a href="#cb6-62"></a>            <span class="kw">return</span> <span class="ot">nil</span>, fmt.Errorf(<span class="st">&quot;failed to open input file: %v&quot;</span>, err)</span>
+<span id="cb6-63"><a href="#cb6-63"></a>        }</span>
+<span id="cb6-64"><a href="#cb6-64"></a>        <span class="kw">return</span> input, <span class="ot">nil</span></span>
+<span id="cb6-65"><a href="#cb6-65"></a>    }</span>
+<span id="cb6-66"><a href="#cb6-66"></a>    <span class="kw">return</span> os.Stdin, <span class="ot">nil</span></span>
+<span id="cb6-67"><a href="#cb6-67"></a>}</span></code></pre></div>
+<h1 id="the-language">The Language</h1>
+<h2 id="brief-history">Brief History</h2>
+<p>The draft of the language started in 2007 by Robert Griesemer, Rob Pike and Ken Thompson and became an open source project in 2009. What is the purpose of the project? &gt; Go was born out of frustration with existing languages and environments for the work we were doing at Google. Programming had become too difficult and the choice of languages was partly to blame. One had to choose either efficient compilation, efficient execution, or ease of programming; all three were not available in the same mainstream language.</p>
+<blockquote>
+<p>Go addressed these issues by attempting to combine the <strong>ease</strong> of programming of an interpreted, dynamically typed language with the <strong>efficiency</strong> and <strong>safety</strong> of a statically typed, compiled language. It also aimed to be modern, with <strong>support for networked and multicore computing</strong>. Finally, working with Go is intended to be <strong>fast</strong>: it should take at most a few seconds to build a large executable on a single computer.</p>
+</blockquote>
+<p><a href="https://golang.org/doc/faq#history">More Info</a></p>
+<p><strong>TA</strong>: - ~10 Years history -&gt; ecosystem is not that rich? - GO try to make it easy to build simple, reliable and efficient software</p>
+<p><strong>Fun Fact</strong>: (maybe not that fun..) in official go faq website, there are 37 “Why” question, and 13 of them are “Why […] not” questions…</p>
+<h2 id="program-structures">Program structures</h2>
+<h3 id="control-structures">Control Structures</h3>
+<p>The syntax of the language doesn’t have anything surprising, maybe unusual feature is the ability to capture declarations also in the if/switch.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode go"><code class="sourceCode go"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">package</span> main</span>
+<span id="cb7-2"><a href="#cb7-2"></a></span>
+<span id="cb7-3"><a href="#cb7-3"></a><span class="kw">import</span> (</span>
+<span id="cb7-4"><a href="#cb7-4"></a>    <span class="st">&quot;fmt&quot;</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a>    <span class="st">&quot;math/rand&quot;</span></span>
+<span id="cb7-6"><a href="#cb7-6"></a>)</span>
+<span id="cb7-7"><a href="#cb7-7"></a></span>
+<span id="cb7-8"><a href="#cb7-8"></a><span class="kw">func</span> main() {</span>
+<span id="cb7-9"><a href="#cb7-9"></a>    <span class="co">// normal if</span></span>
+<span id="cb7-10"><a href="#cb7-10"></a>    rnd := rand.Float64()</span>
+<span id="cb7-11"><a href="#cb7-11"></a>    <span class="kw">if</span> rnd &lt; <span class="dv">0</span><span class="fl">.01</span> { <span class="co">// () brackets are not required</span></span>
+<span id="cb7-12"><a href="#cb7-12"></a>        fmt.Println(<span class="st">&quot;Woow!&quot;</span>)</span>
+<span id="cb7-13"><a href="#cb7-13"></a>    } <span class="kw">else</span> { <span class="co">// but {} are!</span></span>
+<span id="cb7-14"><a href="#cb7-14"></a>        fmt.Println(<span class="st">&quot;....&quot;</span>)</span>
+<span id="cb7-15"><a href="#cb7-15"></a>    }</span>
+<span id="cb7-16"><a href="#cb7-16"></a></span>
+<span id="cb7-17"><a href="#cb7-17"></a>    <span class="co">// capturing variable</span></span>
+<span id="cb7-18"><a href="#cb7-18"></a>    <span class="kw">if</span> rnd := rand.Int(); rnd%<span class="dv">2</span> == <span class="dv">1</span> {</span>
+<span id="cb7-19"><a href="#cb7-19"></a>        fmt.Printf(<span class="st">&quot;%d is odd&quot;</span>, rnd)</span>
+<span id="cb7-20"><a href="#cb7-20"></a>    } <span class="kw">else</span> {</span>
+<span id="cb7-21"><a href="#cb7-21"></a>        fmt.Printf(<span class="st">&quot;%d is even&quot;</span>, rnd)</span>
+<span id="cb7-22"><a href="#cb7-22"></a>    }</span>
+<span id="cb7-23"><a href="#cb7-23"></a>    <span class="co">// note that a declaration would not compile since the type of rnd id float64</span></span>
+<span id="cb7-24"><a href="#cb7-24"></a>    <span class="co">// rnd := rand.Int()</span></span>
+<span id="cb7-25"><a href="#cb7-25"></a></span>
+<span id="cb7-26"><a href="#cb7-26"></a>    <span class="kw">switch</span> rnd := rand.Int(); rnd % <span class="dv">2</span> {</span>
+<span id="cb7-27"><a href="#cb7-27"></a>    <span class="kw">case</span> <span class="dv">0</span>:</span>
+<span id="cb7-28"><a href="#cb7-28"></a>        fmt.Printf(<span class="st">&quot;%d is even&quot;</span>, rnd)</span>
+<span id="cb7-29"><a href="#cb7-29"></a>    <span class="kw">case</span> <span class="dv">1</span>:</span>
+<span id="cb7-30"><a href="#cb7-30"></a>        fmt.Printf(<span class="st">&quot;%d is odd&quot;</span>, rnd)</span>
+<span id="cb7-31"><a href="#cb7-31"></a>    <span class="kw">default</span>:</span>
+<span id="cb7-32"><a href="#cb7-32"></a>        fmt.Printf(<span class="st">&quot;That&#39;s pretty odd?!&quot;</span>)</span>
+<span id="cb7-33"><a href="#cb7-33"></a>    }</span>
+<span id="cb7-34"><a href="#cb7-34"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode go"><code class="sourceCode go"><span id="cb8-1"><a href="#cb8-1"></a><span class="kw">package</span> main</span>
+<span id="cb8-2"><a href="#cb8-2"></a></span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="kw">import</span> (</span>
+<span id="cb8-4"><a href="#cb8-4"></a>    <span class="st">&quot;fmt&quot;</span></span>
+<span id="cb8-5"><a href="#cb8-5"></a>    <span class="st">&quot;math/rand&quot;</span></span>
+<span id="cb8-6"><a href="#cb8-6"></a>)</span>
+<span id="cb8-7"><a href="#cb8-7"></a></span>
+<span id="cb8-8"><a href="#cb8-8"></a><span class="kw">func</span> main() {</span>
+<span id="cb8-9"><a href="#cb8-9"></a>    <span class="co">// each of the tree section is optional</span></span>
+<span id="cb8-10"><a href="#cb8-10"></a>    <span class="kw">for</span> i := <span class="dv">0</span>; i &lt; <span class="dv">10</span>; i++ {</span>
+<span id="cb8-11"><a href="#cb8-11"></a>        fmt.Println(i)</span>
+<span id="cb8-12"><a href="#cb8-12"></a>    }</span>
+<span id="cb8-13"><a href="#cb8-13"></a></span>
+<span id="cb8-14"><a href="#cb8-14"></a>    <span class="kw">var</span> fruits = []<span class="dt">string</span>{<span class="st">&quot;🍏&quot;</span>, <span class="st">&quot;🍎&quot;</span>, <span class="st">&quot;🍐&quot;</span>, <span class="st">&quot;🥑&quot;</span>}</span>
+<span id="cb8-15"><a href="#cb8-15"></a>    <span class="kw">for</span> i := <span class="kw">range</span> fruits {</span>
+<span id="cb8-16"><a href="#cb8-16"></a>        fmt.Println(fruits[i])</span>
+<span id="cb8-17"><a href="#cb8-17"></a>    }</span>
+<span id="cb8-18"><a href="#cb8-18"></a></span>
+<span id="cb8-19"><a href="#cb8-19"></a>    <span class="kw">for</span> i, fruit := <span class="kw">range</span> fruits {</span>
+<span id="cb8-20"><a href="#cb8-20"></a>        fmt.Println(i, fruit)</span>
+<span id="cb8-21"><a href="#cb8-21"></a>    }</span>
+<span id="cb8-22"><a href="#cb8-22"></a></span>
+<span id="cb8-23"><a href="#cb8-23"></a>    <span class="co">// no condition will be &quot;infinite&quot; loop</span></span>
+<span id="cb8-24"><a href="#cb8-24"></a>    <span class="kw">for</span> {</span>
+<span id="cb8-25"><a href="#cb8-25"></a>        fmt.Print(<span class="st">&quot;.&quot;</span>)</span>
+<span id="cb8-26"><a href="#cb8-26"></a>        <span class="kw">if</span> rand.Float64() &lt; <span class="dv">0</span><span class="fl">.5</span> {</span>
+<span id="cb8-27"><a href="#cb8-27"></a>            <span class="kw">break</span></span>
+<span id="cb8-28"><a href="#cb8-28"></a>        }</span>
+<span id="cb8-29"><a href="#cb8-29"></a>    }</span>
+<span id="cb8-30"><a href="#cb8-30"></a>    fruits = <span class="bu">append</span>(fruits[:<span class="dv">1</span>], fruits[<span class="dv">2</span>:]...)</span>
+<span id="cb8-31"><a href="#cb8-31"></a>}</span></code></pre></div>
+<h2 id="types">Types</h2>
+<h3 id="basic-types">Basic types</h3>
+<ul>
+<li>string</li>
+<li>bool.</li>
+<li>numeric types:
+<ul>
+<li>integer: int, rune, int(8|16|32|64)</li>
+<li>unsigned: byte, u + one of the above</li>
+<li>uintptr: <a href="https://stackoverflow.com/questions/59042646/whats-the-difference-between-uint-and-uintptr-in-golang">probably don’t need to use</a></li>
+<li>floating point: float32, float64</li>
+<li>complex numbers: complex64, complex128.</li>
+</ul></li>
+</ul>
+<p>Go does not provide implicit conversion between numeric types: <a href="https://golang.org/doc/faq#conversions">why?</a></p>
+<p><code>string</code> can contain arbitrary bytes, but in general literal strings almost always contain UTF-8 characters (Go source file must be written in UTF-8). <code>rune</code> is “UTF-8 code point”, without going too much into the details we can think of a rune a character. <a href="https://blog.golang.org/strings">details</a>.</p>
+<h3 id="composite-types">Composite types</h3>
+<ul>
+<li>struct</li>
+<li>pointers</li>
+<li>data structures:
+<ul>
+<li>array</li>
+<li>slice</li>
+<li>map</li>
+</ul></li>
+</ul>
+<h4 id="struct-and-pointers">Struct And Pointers</h4>
+<div class="sourceCode" id="cb9"><pre class="sourceCode go"><code class="sourceCode go"><span id="cb9-1"><a href="#cb9-1"></a><span class="kw">package</span> main</span>
+<span id="cb9-2"><a href="#cb9-2"></a></span>
+<span id="cb9-3"><a href="#cb9-3"></a><span class="kw">import</span> <span class="st">&quot;fmt&quot;</span></span>
+<span id="cb9-4"><a href="#cb9-4"></a></span>
+<span id="cb9-5"><a href="#cb9-5"></a><span class="kw">type</span> drink <span class="kw">struct</span> {</span>
+<span id="cb9-6"><a href="#cb9-6"></a>    name <span class="dt">string</span></span>
+<span id="cb9-7"><a href="#cb9-7"></a>    icon <span class="dt">string</span></span>
+<span id="cb9-8"><a href="#cb9-8"></a>}</span>
+<span id="cb9-9"><a href="#cb9-9"></a></span>
+<span id="cb9-10"><a href="#cb9-10"></a><span class="kw">func</span> (f *drink) AddIce() {</span>
+<span id="cb9-11"><a href="#cb9-11"></a>    fmt.Printf(<span class="st">&quot;adding ice to %s</span><span class="ch">\n</span><span class="st">&quot;</span>, f.name)</span>
+<span id="cb9-12"><a href="#cb9-12"></a>    f.name = <span class="st">&quot;iced &quot;</span> + f.name</span>
+<span id="cb9-13"><a href="#cb9-13"></a>    f.icon += <span class="st">&quot;\U0001F9CA&quot;</span></span>
+<span id="cb9-14"><a href="#cb9-14"></a>}</span>
+<span id="cb9-15"><a href="#cb9-15"></a></span>
+<span id="cb9-16"><a href="#cb9-16"></a><span class="kw">func</span> (f drink) AddStones() drink {</span>
+<span id="cb9-17"><a href="#cb9-17"></a>    fmt.Printf(<span class="st">&quot;adding stones to %s</span><span class="ch">\n</span><span class="st">&quot;</span>, f.name)</span>
+<span id="cb9-18"><a href="#cb9-18"></a>    f.name = <span class="st">&quot;classy &quot;</span> + f.name</span>
+<span id="cb9-19"><a href="#cb9-19"></a>    f.icon += <span class="st">&quot;\U0001F94C&quot;</span></span>
+<span id="cb9-20"><a href="#cb9-20"></a>    <span class="kw">return</span> f</span>
+<span id="cb9-21"><a href="#cb9-21"></a>}</span>
+<span id="cb9-22"><a href="#cb9-22"></a></span>
+<span id="cb9-23"><a href="#cb9-23"></a><span class="kw">func</span> main() {</span>
+<span id="cb9-24"><a href="#cb9-24"></a>    <span class="co">// define a new struct / variable</span></span>
+<span id="cb9-25"><a href="#cb9-25"></a>    <span class="kw">var</span> beer <span class="kw">struct</span> {</span>
+<span id="cb9-26"><a href="#cb9-26"></a>        name <span class="dt">string</span></span>
+<span id="cb9-27"><a href="#cb9-27"></a>        icon <span class="dt">string</span></span>
+<span id="cb9-28"><a href="#cb9-28"></a>    }</span>
+<span id="cb9-29"><a href="#cb9-29"></a>    <span class="co">// declaration initialize the variable to &quot;all zero values&quot;</span></span>
+<span id="cb9-30"><a href="#cb9-30"></a>    fmt.Println(beer)</span>
+<span id="cb9-31"><a href="#cb9-31"></a></span>
+<span id="cb9-32"><a href="#cb9-32"></a>    beer.name = <span class="st">&quot;beer&quot;</span></span>
+<span id="cb9-33"><a href="#cb9-33"></a>    beer.icon = <span class="st">&quot;🍺&quot;</span></span>
+<span id="cb9-34"><a href="#cb9-34"></a>    <span class="co">// using custom types</span></span>
+<span id="cb9-35"><a href="#cb9-35"></a>    whiskey := drink{name: <span class="st">&quot;whiskey&quot;</span>, icon: <span class="st">&quot;🥃&quot;</span>}</span>
+<span id="cb9-36"><a href="#cb9-36"></a></span>
+<span id="cb9-37"><a href="#cb9-37"></a>    coffee := drink{</span>
+<span id="cb9-38"><a href="#cb9-38"></a>        name: <span class="st">&quot;coffee&quot;</span>,</span>
+<span id="cb9-39"><a href="#cb9-39"></a>        icon: <span class="st">&quot;☕️&quot;</span>,</span>
+<span id="cb9-40"><a href="#cb9-40"></a>    }</span>
+<span id="cb9-41"><a href="#cb9-41"></a>    fmt.Println(beer, whiskey, coffee)</span>
+<span id="cb9-42"><a href="#cb9-42"></a></span>
+<span id="cb9-43"><a href="#cb9-43"></a>    coffee.AddIce() <span class="co">// note: add ice wants a pointer, but the compiler help to easy the syntax and it is possible to call it on a struct</span></span>
+<span id="cb9-44"><a href="#cb9-44"></a>    newWhiskey := whiskey.AddStones()</span>
+<span id="cb9-45"><a href="#cb9-45"></a>    fmt.Println(coffee, whiskey, newWhiskey)</span>
+<span id="cb9-46"><a href="#cb9-46"></a></span>
+<span id="cb9-47"><a href="#cb9-47"></a>    <span class="co">//same syntax sugar works also in the other way</span></span>
+<span id="cb9-48"><a href="#cb9-48"></a>    <span class="kw">var</span> lastWhiskey *drink = &amp;whiskey</span>
+<span id="cb9-49"><a href="#cb9-49"></a>    anotherOne := lastWhiskey.AddStones()</span>
+<span id="cb9-50"><a href="#cb9-50"></a>    lastWhiskey.AddIce()</span>
+<span id="cb9-51"><a href="#cb9-51"></a>    fmt.Println(whiskey, lastWhiskey, anotherOne)</span>
+<span id="cb9-52"><a href="#cb9-52"></a></span>
+<span id="cb9-53"><a href="#cb9-53"></a>    <span class="co">// remember that beer is not defined as drink?</span></span>
+<span id="cb9-54"><a href="#cb9-54"></a>    <span class="co">// beer.AddIce() does not compile!</span></span>
+<span id="cb9-55"><a href="#cb9-55"></a>    <span class="kw">var</span> lastOne drink = beer <span class="co">// The compiler check that the conversion is safe!</span></span>
+<span id="cb9-56"><a href="#cb9-56"></a>    lastOne.AddIce()         <span class="co">// btw: are you sure you want to do that?!?!?</span></span>
+<span id="cb9-57"><a href="#cb9-57"></a>    fmt.Println(beer, lastOne)</span>
+<span id="cb9-58"><a href="#cb9-58"></a>}</span></code></pre></div>
+<h4 id="array-and-slices">Array and Slices</h4>
+<p>Arrays are fixed length, and it is part of the type. Usually they are not used directly, using <code>slices</code> instead.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode go"><code class="sourceCode go"><span id="cb10-1"><a href="#cb10-1"></a><span class="kw">package</span> main</span>
+<span id="cb10-2"><a href="#cb10-2"></a></span>
+<span id="cb10-3"><a href="#cb10-3"></a><span class="kw">import</span> (</span>
+<span id="cb10-4"><a href="#cb10-4"></a>    <span class="st">&quot;fmt&quot;</span></span>
+<span id="cb10-5"><a href="#cb10-5"></a>    <span class="st">&quot;sort&quot;</span></span>
+<span id="cb10-6"><a href="#cb10-6"></a>)</span>
+<span id="cb10-7"><a href="#cb10-7"></a></span>
+<span id="cb10-8"><a href="#cb10-8"></a><span class="kw">func</span> main() {</span>
+<span id="cb10-9"><a href="#cb10-9"></a>    <span class="kw">var</span> a [<span class="dv">3</span>]<span class="dt">int</span></span>
+<span id="cb10-10"><a href="#cb10-10"></a>    <span class="kw">var</span> b = [<span class="dv">3</span>]<span class="dt">int</span>{<span class="dv">0</span>, <span class="dv">10</span>, <span class="dv">0</span>}</span>
+<span id="cb10-11"><a href="#cb10-11"></a>    fmt.Println(a, b, a == b)</span>
+<span id="cb10-12"><a href="#cb10-12"></a>    a[<span class="dv">1</span>] = <span class="dv">10</span></span>
+<span id="cb10-13"><a href="#cb10-13"></a>    <span class="co">// if the elements are comparable the array is comparable to!</span></span>
+<span id="cb10-14"><a href="#cb10-14"></a>    fmt.Println(a, b, a == b)</span>
+<span id="cb10-15"><a href="#cb10-15"></a>    <span class="kw">var</span> clone = a</span>
+<span id="cb10-16"><a href="#cb10-16"></a>    clone[<span class="dv">1</span>] = <span class="dv">21</span></span>
+<span id="cb10-17"><a href="#cb10-17"></a>    fmt.Println(a, clone)</span>
+<span id="cb10-18"><a href="#cb10-18"></a></span>
+<span id="cb10-19"><a href="#cb10-19"></a>    <span class="co">//sort.Ints(a) -&gt; cannot use &#39;a&#39; (type [3]int) as type []int: which is a slice of integer</span></span>
+<span id="cb10-20"><a href="#cb10-20"></a></span>
+<span id="cb10-21"><a href="#cb10-21"></a>    <span class="co">// a slice give access to a subsequence (or all) elements of the so called underlying array</span></span>
+<span id="cb10-22"><a href="#cb10-22"></a>    <span class="kw">var</span> c []<span class="dt">int</span> = a[:]</span>
+<span id="cb10-23"><a href="#cb10-23"></a>    fmt.Println(c, <span class="bu">len</span>(c), <span class="bu">cap</span>(c)) <span class="co">// capacity is the size of the underlying array</span></span>
+<span id="cb10-24"><a href="#cb10-24"></a></span>
+<span id="cb10-25"><a href="#cb10-25"></a>    c[<span class="dv">1</span>] = <span class="dv">22</span> <span class="co">// `a` is the underlying array for `c`</span></span>
+<span id="cb10-26"><a href="#cb10-26"></a>    fmt.Println(a, c)</span>
+<span id="cb10-27"><a href="#cb10-27"></a>    <span class="co">//fmt.Println(c == a) -&gt; c == a (mismatched types []int and [3]int)</span></span>
+<span id="cb10-28"><a href="#cb10-28"></a></span>
+<span id="cb10-29"><a href="#cb10-29"></a>    c = <span class="bu">append</span>(c, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">8</span>) <span class="co">// add some elements</span></span>
+<span id="cb10-30"><a href="#cb10-30"></a>    sort.Ints(c)</span>
+<span id="cb10-31"><a href="#cb10-31"></a>    fmt.Println(<span class="st">&quot;c:&quot;</span>, c, <span class="bu">len</span>(c), <span class="bu">cap</span>(c))</span>
+<span id="cb10-32"><a href="#cb10-32"></a></span>
+<span id="cb10-33"><a href="#cb10-33"></a>    <span class="co">// what is the relationship between d and c underlying array?</span></span>
+<span id="cb10-34"><a href="#cb10-34"></a>    d := <span class="bu">append</span>(c, <span class="dv">100</span>)</span>
+<span id="cb10-35"><a href="#cb10-35"></a>    d[<span class="dv">1</span>] = <span class="dv">1234</span></span>
+<span id="cb10-36"><a href="#cb10-36"></a>    fmt.Println(<span class="st">&quot;c:&quot;</span>, c, <span class="bu">len</span>(c), <span class="bu">cap</span>(c))</span>
+<span id="cb10-37"><a href="#cb10-37"></a>    fmt.Println(<span class="st">&quot;d:&quot;</span>, d, <span class="bu">len</span>(d), <span class="bu">cap</span>(d)) <span class="co">// here it is the same!</span></span>
+<span id="cb10-38"><a href="#cb10-38"></a>    <span class="co">// fmt.Println(c == d) //Invalid operation: c == d (operator == is not defined on []int)</span></span>
+<span id="cb10-39"><a href="#cb10-39"></a></span>
+<span id="cb10-40"><a href="#cb10-40"></a>    d = <span class="bu">append</span>(c, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">300</span>)</span>
+<span id="cb10-41"><a href="#cb10-41"></a>    d[<span class="dv">1</span>] = <span class="dv">1234</span></span>
+<span id="cb10-42"><a href="#cb10-42"></a>    fmt.Println(<span class="st">&quot;c:&quot;</span>, c, <span class="bu">len</span>(c), <span class="bu">cap</span>(c))</span>
+<span id="cb10-43"><a href="#cb10-43"></a>    fmt.Println(<span class="st">&quot;d:&quot;</span>, d, <span class="bu">len</span>(d), <span class="bu">cap</span>(d)) <span class="co">// here is not!</span></span>
+<span id="cb10-44"><a href="#cb10-44"></a>    <span class="co">// no assumptions about what append return!</span></span>
+<span id="cb10-45"><a href="#cb10-45"></a></span>
+<span id="cb10-46"><a href="#cb10-46"></a>    <span class="co">// standard library is not very rich of methods...</span></span>
+<span id="cb10-47"><a href="#cb10-47"></a>    <span class="co">// IDE can help with snippets, for instance for a remove operation it suggest:</span></span>
+<span id="cb10-48"><a href="#cb10-48"></a>    fmt.Println(<span class="st">&quot;d:&quot;</span>, d, <span class="bu">len</span>(d), <span class="bu">cap</span>(d))</span>
+<span id="cb10-49"><a href="#cb10-49"></a>    d = <span class="bu">append</span>(d[:<span class="dv">4</span>], d[<span class="dv">5</span>:]...)</span>
+<span id="cb10-50"><a href="#cb10-50"></a>    fmt.Println(<span class="st">&quot;d:&quot;</span>, d, <span class="bu">len</span>(d), <span class="bu">cap</span>(d))</span>
+<span id="cb10-51"><a href="#cb10-51"></a>}</span></code></pre></div>
+<h3 id="other-types">Other Types</h3>
+<ul>
+<li>functions</li>
+<li>channels</li>
+<li>interfaces</li>
+</ul>
+<h4 id="functions">Functions</h4>
+<p>Functions are first class values</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode go"><code class="sourceCode go"><span id="cb11-1"><a href="#cb11-1"></a><span class="kw">package</span> main</span>
+<span id="cb11-2"><a href="#cb11-2"></a></span>
+<span id="cb11-3"><a href="#cb11-3"></a><span class="kw">import</span> (</span>
+<span id="cb11-4"><a href="#cb11-4"></a>    <span class="st">&quot;fmt&quot;</span></span>
+<span id="cb11-5"><a href="#cb11-5"></a>)</span>
+<span id="cb11-6"><a href="#cb11-6"></a></span>
+<span id="cb11-7"><a href="#cb11-7"></a><span class="kw">func</span> main() {</span>
+<span id="cb11-8"><a href="#cb11-8"></a>    <span class="co">// functions / closures can be stored in variables</span></span>
+<span id="cb11-9"><a href="#cb11-9"></a>    greet := <span class="kw">func</span>(name <span class="dt">string</span>) {</span>
+<span id="cb11-10"><a href="#cb11-10"></a>        fmt.Println(<span class="st">&quot;Hello&quot;</span>, name, <span class="st">&quot;!&quot;</span>)</span>
+<span id="cb11-11"><a href="#cb11-11"></a>    }</span>
+<span id="cb11-12"><a href="#cb11-12"></a>    greet(<span class="st">&quot;🌍&quot;</span>)</span>
+<span id="cb11-13"><a href="#cb11-13"></a>    fmt.Printf(<span class="st">&quot;%T</span><span class="ch">\n</span><span class="st">&quot;</span>, greet)</span>
+<span id="cb11-14"><a href="#cb11-14"></a></span>
+<span id="cb11-15"><a href="#cb11-15"></a>    <span class="co">// deferring the call to an anonymous function</span></span>
+<span id="cb11-16"><a href="#cb11-16"></a>    <span class="kw">defer</span> <span class="kw">func</span>() {</span>
+<span id="cb11-17"><a href="#cb11-17"></a>        fmt.Println(<span class="st">&quot;This will be executed before returning&quot;</span>)</span>
+<span id="cb11-18"><a href="#cb11-18"></a>    }()</span>
+<span id="cb11-19"><a href="#cb11-19"></a></span>
+<span id="cb11-20"><a href="#cb11-20"></a>    <span class="co">//</span></span>
+<span id="cb11-21"><a href="#cb11-21"></a>    fmt.Printf(<span class="st">&quot;%+v</span><span class="ch">\n</span><span class="st">&quot;</span>, CanIHaveACoffeePlease(Cappuccino()))</span>
+<span id="cb11-22"><a href="#cb11-22"></a>    fmt.Printf(<span class="st">&quot;%+v</span><span class="ch">\n</span><span class="st">&quot;</span>, CanIHaveACoffeePlease(Espresso(), Lungo))</span>
+<span id="cb11-23"><a href="#cb11-23"></a>    fmt.Printf(<span class="st">&quot;%+v</span><span class="ch">\n</span><span class="st">&quot;</span>, CanIHaveACoffeePlease(Espresso(), Double, InBigCup(), Iced()))</span>
+<span id="cb11-24"><a href="#cb11-24"></a></span>
+<span id="cb11-25"><a href="#cb11-25"></a>}</span>
+<span id="cb11-26"><a href="#cb11-26"></a></span>
+<span id="cb11-27"><a href="#cb11-27"></a><span class="kw">func</span> CanIHaveACoffeePlease(coffee Coffee, options ...CoffeeOption) Coffee {</span>
+<span id="cb11-28"><a href="#cb11-28"></a>    <span class="kw">for</span> _, option := <span class="kw">range</span> options {</span>
+<span id="cb11-29"><a href="#cb11-29"></a>        coffee = option(coffee)</span>
+<span id="cb11-30"><a href="#cb11-30"></a>    }</span>
+<span id="cb11-31"><a href="#cb11-31"></a>    <span class="kw">return</span> coffee</span>
+<span id="cb11-32"><a href="#cb11-32"></a>}</span>
+<span id="cb11-33"><a href="#cb11-33"></a></span>
+<span id="cb11-34"><a href="#cb11-34"></a><span class="kw">type</span> (</span>
+<span id="cb11-35"><a href="#cb11-35"></a>    CoffeeOption <span class="kw">func</span>(coffee Coffee) Coffee</span>
+<span id="cb11-36"><a href="#cb11-36"></a>    Coffee       <span class="kw">struct</span> {</span>
+<span id="cb11-37"><a href="#cb11-37"></a>        Cup    <span class="dt">string</span></span>
+<span id="cb11-38"><a href="#cb11-38"></a>        Coffee <span class="dt">float32</span></span>
+<span id="cb11-39"><a href="#cb11-39"></a>        Extra  []<span class="dt">string</span></span>
+<span id="cb11-40"><a href="#cb11-40"></a>        Ice    <span class="dt">bool</span></span>
+<span id="cb11-41"><a href="#cb11-41"></a>    }</span>
+<span id="cb11-42"><a href="#cb11-42"></a>)</span>
+<span id="cb11-43"><a href="#cb11-43"></a></span>
+<span id="cb11-44"><a href="#cb11-44"></a><span class="kw">func</span> Espresso() Coffee {</span>
+<span id="cb11-45"><a href="#cb11-45"></a>    <span class="kw">var</span> coffee Coffee</span>
+<span id="cb11-46"><a href="#cb11-46"></a>    coffee.Coffee = <span class="dv">30</span><span class="fl">.0</span></span>
+<span id="cb11-47"><a href="#cb11-47"></a>    coffee.Cup = <span class="st">&quot;half cup&quot;</span></span>
+<span id="cb11-48"><a href="#cb11-48"></a>    <span class="kw">return</span> coffee</span>
+<span id="cb11-49"><a href="#cb11-49"></a>}</span>
+<span id="cb11-50"><a href="#cb11-50"></a><span class="kw">func</span> Lungo(coffee Coffee) Coffee {</span>
+<span id="cb11-51"><a href="#cb11-51"></a>    coffee.Coffee *= <span class="dv">1</span><span class="fl">.5</span></span>
+<span id="cb11-52"><a href="#cb11-52"></a>    <span class="kw">return</span> coffee</span>
+<span id="cb11-53"><a href="#cb11-53"></a>}</span>
+<span id="cb11-54"><a href="#cb11-54"></a><span class="kw">func</span> Double(coffee Coffee) Coffee {</span>
+<span id="cb11-55"><a href="#cb11-55"></a>    coffee.Coffee *= <span class="dv">2</span><span class="fl">.0</span></span>
+<span id="cb11-56"><a href="#cb11-56"></a>    <span class="kw">return</span> coffee</span>
+<span id="cb11-57"><a href="#cb11-57"></a>}</span>
+<span id="cb11-58"><a href="#cb11-58"></a><span class="kw">func</span> Cappuccino() Coffee {</span>
+<span id="cb11-59"><a href="#cb11-59"></a>    <span class="kw">return</span> CanIHaveACoffeePlease(Espresso(), WithMilk(<span class="dv">125</span>), InBigCup())</span>
+<span id="cb11-60"><a href="#cb11-60"></a>}</span>
+<span id="cb11-61"><a href="#cb11-61"></a><span class="kw">func</span> Iced() CoffeeOption {</span>
+<span id="cb11-62"><a href="#cb11-62"></a>    <span class="kw">return</span> <span class="kw">func</span>(coffee Coffee) Coffee {</span>
+<span id="cb11-63"><a href="#cb11-63"></a>        coffee.Ice = <span class="ot">true</span></span>
+<span id="cb11-64"><a href="#cb11-64"></a>        <span class="kw">return</span> coffee</span>
+<span id="cb11-65"><a href="#cb11-65"></a>    }</span>
+<span id="cb11-66"><a href="#cb11-66"></a>}</span>
+<span id="cb11-67"><a href="#cb11-67"></a><span class="kw">func</span> WithMilk(ml <span class="dt">float32</span>) CoffeeOption {</span>
+<span id="cb11-68"><a href="#cb11-68"></a>    <span class="kw">return</span> <span class="kw">func</span>(coffee Coffee) Coffee {</span>
+<span id="cb11-69"><a href="#cb11-69"></a>        coffee.Extra = <span class="bu">append</span>(coffee.Extra, fmt.Sprintf(<span class="st">&quot;%v of Milk&quot;</span>, ml))</span>
+<span id="cb11-70"><a href="#cb11-70"></a>        <span class="kw">return</span> coffee</span>
+<span id="cb11-71"><a href="#cb11-71"></a>    }</span>
+<span id="cb11-72"><a href="#cb11-72"></a>}</span>
+<span id="cb11-73"><a href="#cb11-73"></a><span class="kw">func</span> InBigCup() CoffeeOption {</span>
+<span id="cb11-74"><a href="#cb11-74"></a>    <span class="kw">return</span> <span class="kw">func</span>(coffee Coffee) Coffee {</span>
+<span id="cb11-75"><a href="#cb11-75"></a>        coffee.Cup = <span class="st">&quot;big cup&quot;</span></span>
+<span id="cb11-76"><a href="#cb11-76"></a>        <span class="kw">return</span> coffee</span>
+<span id="cb11-77"><a href="#cb11-77"></a>    }</span>
+<span id="cb11-78"><a href="#cb11-78"></a>}</span></code></pre></div>
+<ul>
+<li>(Do Not Fear First Class Functions)[https://dave.cheney.net/2016/11/13/do-not-fear-first-class-functions]</li>
+</ul>
+<h4 id="interfaces">Interfaces</h4>
+<p>Go takes an unusual approach to interfaces, they are <strong>satisfied implicitly</strong>. So we don’t declare which interfaces as type implements, we just implement the methods. Include example for: - basic usage - embedding - type as couple - writer / reader flexibility</p>
+<h1 id="object-oriented-programming">Object Oriented Programming</h1>
+<p>So far we learned how to declare new types and how to declare methods for them. Go support the mechanisms of OOP in unusual and opinionated way:</p>
+<h2 id="encapsulation">Encapsulation</h2>
+<p>There are two level of visibility: - package level: the member name start with a lower capital letter - exported: the member name is capitalized</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode go"><code class="sourceCode go"><span id="cb12-1"><a href="#cb12-1"></a><span class="kw">package</span> oop</span>
+<span id="cb12-2"><a href="#cb12-2"></a></span>
+<span id="cb12-3"><a href="#cb12-3"></a><span class="co">// the type is exported</span></span>
+<span id="cb12-4"><a href="#cb12-4"></a><span class="kw">type</span> Foo <span class="kw">struct</span> {</span>
+<span id="cb12-5"><a href="#cb12-5"></a>    <span class="co">// Capitalized field: it is exported</span></span>
+<span id="cb12-6"><a href="#cb12-6"></a>    Exported <span class="dt">int</span></span>
+<span id="cb12-7"><a href="#cb12-7"></a>    <span class="co">// field is not visible out of main package</span></span>
+<span id="cb12-8"><a href="#cb12-8"></a>    private <span class="dt">int</span></span>
+<span id="cb12-9"><a href="#cb12-9"></a>}</span>
+<span id="cb12-10"><a href="#cb12-10"></a></span>
+<span id="cb12-11"><a href="#cb12-11"></a><span class="kw">func</span> IsPublic()    {}</span>
+<span id="cb12-12"><a href="#cb12-12"></a><span class="kw">func</span> isNotPublic() {}</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode go"><code class="sourceCode go"><span id="cb13-1"><a href="#cb13-1"></a><span class="kw">package</span> main</span>
+<span id="cb13-2"><a href="#cb13-2"></a></span>
+<span id="cb13-3"><a href="#cb13-3"></a><span class="kw">import</span> (</span>
+<span id="cb13-4"><a href="#cb13-4"></a>    <span class="st">&quot;examples/oop&quot;</span></span>
+<span id="cb13-5"><a href="#cb13-5"></a>    <span class="st">&quot;fmt&quot;</span></span>
+<span id="cb13-6"><a href="#cb13-6"></a>)</span>
+<span id="cb13-7"><a href="#cb13-7"></a></span>
+<span id="cb13-8"><a href="#cb13-8"></a><span class="kw">func</span> main() {</span>
+<span id="cb13-9"><a href="#cb13-9"></a>    <span class="kw">var</span> foo = oop.Foo{Exported: <span class="dv">1</span>}</span>
+<span id="cb13-10"><a href="#cb13-10"></a>    <span class="co">// foo.private -&gt; Unexported field &#39;private&#39; usage</span></span>
+<span id="cb13-11"><a href="#cb13-11"></a>    fmt.Println(foo)</span>
+<span id="cb13-12"><a href="#cb13-12"></a>    oop.IsPublic()</span>
+<span id="cb13-13"><a href="#cb13-13"></a>    <span class="co">// ext.isNotPublic() -&gt; Unexported function &#39;isNotPublic&#39; usage</span></span>
+<span id="cb13-14"><a href="#cb13-14"></a>}</span></code></pre></div>
+<h2 id="inheritance">Inheritance</h2>
+<p>Go allow Inheritance though composition.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode go"><code class="sourceCode go"><span id="cb14-1"><a href="#cb14-1"></a><span class="kw">package</span> main</span>
+<span id="cb14-2"><a href="#cb14-2"></a></span>
+<span id="cb14-3"><a href="#cb14-3"></a><span class="kw">import</span> (</span>
+<span id="cb14-4"><a href="#cb14-4"></a>    <span class="st">&quot;encoding/json&quot;</span></span>
+<span id="cb14-5"><a href="#cb14-5"></a>    <span class="st">&quot;fmt&quot;</span></span>
+<span id="cb14-6"><a href="#cb14-6"></a>    <span class="st">&quot;math/rand&quot;</span></span>
+<span id="cb14-7"><a href="#cb14-7"></a>    <span class="st">&quot;net/http&quot;</span></span>
+<span id="cb14-8"><a href="#cb14-8"></a>)</span>
+<span id="cb14-9"><a href="#cb14-9"></a></span>
+<span id="cb14-10"><a href="#cb14-10"></a><span class="kw">type</span> handler <span class="kw">struct</span> {</span>
+<span id="cb14-11"><a href="#cb14-11"></a>    <span class="co">//embedding the http.ServeMux allow to use all its the methods</span></span>
+<span id="cb14-12"><a href="#cb14-12"></a>    <span class="co">//on a `handler` end extend it with new behaviour</span></span>
+<span id="cb14-13"><a href="#cb14-13"></a>    *http.ServeMux</span>
+<span id="cb14-14"><a href="#cb14-14"></a>}</span>
+<span id="cb14-15"><a href="#cb14-15"></a></span>
+<span id="cb14-16"><a href="#cb14-16"></a><span class="kw">func</span> NewHandler() *handler {</span>
+<span id="cb14-17"><a href="#cb14-17"></a>    <span class="kw">return</span> &amp;handler{http.DefaultServeMux}</span>
+<span id="cb14-18"><a href="#cb14-18"></a>}</span>
+<span id="cb14-19"><a href="#cb14-19"></a></span>
+<span id="cb14-20"><a href="#cb14-20"></a><span class="co">//Method that allow to add as handler a function that return (value, error) and send the response\</span></span>
+<span id="cb14-21"><a href="#cb14-21"></a><span class="co">//in json.</span></span>
+<span id="cb14-22"><a href="#cb14-22"></a><span class="kw">func</span> (h *handler) HandleJson(patter <span class="dt">string</span>, serve <span class="kw">func</span>(r *http.Request) (<span class="kw">interface</span>{}, <span class="dt">error</span>)) {</span>
+<span id="cb14-23"><a href="#cb14-23"></a>    h.HandleFunc(patter, <span class="kw">func</span>(w http.ResponseWriter, r *http.Request) {</span>
+<span id="cb14-24"><a href="#cb14-24"></a>        resp, err := serve(r)</span>
+<span id="cb14-25"><a href="#cb14-25"></a>        <span class="kw">if</span> err != <span class="ot">nil</span> {</span>
+<span id="cb14-26"><a href="#cb14-26"></a>            w.WriteHeader(http.StatusInternalServerError)</span>
+<span id="cb14-27"><a href="#cb14-27"></a>            resp = NewError(err)</span>
+<span id="cb14-28"><a href="#cb14-28"></a>        }</span>
+<span id="cb14-29"><a href="#cb14-29"></a>        w.Header().Add(<span class="st">&quot;Content-Type&quot;</span>, <span class="st">&quot;application/json&quot;</span>)</span>
+<span id="cb14-30"><a href="#cb14-30"></a>        _ = json.NewEncoder(w).Encode(resp)</span>
+<span id="cb14-31"><a href="#cb14-31"></a>    })</span>
+<span id="cb14-32"><a href="#cb14-32"></a>}</span>
+<span id="cb14-33"><a href="#cb14-33"></a></span>
+<span id="cb14-34"><a href="#cb14-34"></a><span class="kw">func</span> main() {</span>
+<span id="cb14-35"><a href="#cb14-35"></a>    handler := NewHandler()</span>
+<span id="cb14-36"><a href="#cb14-36"></a>    <span class="co">//Note: HandleFunc is defined on *ServeMux</span></span>
+<span id="cb14-37"><a href="#cb14-37"></a>    handler.HandleFunc(<span class="st">&quot;/hello&quot;</span>, hello)</span>
+<span id="cb14-38"><a href="#cb14-38"></a>    handler.HandleJson(<span class="st">&quot;/hello-json&quot;</span>, helloJson)</span>
+<span id="cb14-39"><a href="#cb14-39"></a>    <span class="co">//Note: ListenAndServe accept an interface http.Handler that our handler inherit from the embedded *ServeMux</span></span>
+<span id="cb14-40"><a href="#cb14-40"></a>    err := http.ListenAndServe(<span class="st">&quot;:12345&quot;</span>, handler)</span>
+<span id="cb14-41"><a href="#cb14-41"></a>    <span class="bu">panic</span>(err)</span>
+<span id="cb14-42"><a href="#cb14-42"></a>}</span>
+<span id="cb14-43"><a href="#cb14-43"></a></span>
+<span id="cb14-44"><a href="#cb14-44"></a><span class="kw">func</span> hello(w http.ResponseWriter, r *http.Request) {</span>
+<span id="cb14-45"><a href="#cb14-45"></a>    w.Header().Add(<span class="st">&quot;Content-Type&quot;</span>, <span class="st">&quot;application/json&quot;</span>)</span>
+<span id="cb14-46"><a href="#cb14-46"></a>    message, err := GetMessage(r.RequestURI)</span>
+<span id="cb14-47"><a href="#cb14-47"></a>    <span class="kw">if</span> err != <span class="ot">nil</span> {</span>
+<span id="cb14-48"><a href="#cb14-48"></a>        w.WriteHeader(http.StatusInternalServerError)</span>
+<span id="cb14-49"><a href="#cb14-49"></a>        _ = json.NewEncoder(w).Encode(NewError(err))</span>
+<span id="cb14-50"><a href="#cb14-50"></a>        <span class="kw">return</span></span>
+<span id="cb14-51"><a href="#cb14-51"></a>    }</span>
+<span id="cb14-52"><a href="#cb14-52"></a>    _ = json.NewEncoder(w).Encode(message)</span>
+<span id="cb14-53"><a href="#cb14-53"></a>}</span>
+<span id="cb14-54"><a href="#cb14-54"></a></span>
+<span id="cb14-55"><a href="#cb14-55"></a><span class="kw">func</span> helloJson(r *http.Request) (<span class="kw">interface</span>{}, <span class="dt">error</span>) {</span>
+<span id="cb14-56"><a href="#cb14-56"></a>    <span class="kw">return</span> GetMessage(r.RequestURI)</span>
+<span id="cb14-57"><a href="#cb14-57"></a>}</span>
+<span id="cb14-58"><a href="#cb14-58"></a></span>
+<span id="cb14-59"><a href="#cb14-59"></a><span class="co">//Used for sending error as json</span></span>
+<span id="cb14-60"><a href="#cb14-60"></a><span class="kw">type</span> Error <span class="kw">struct</span> {</span>
+<span id="cb14-61"><a href="#cb14-61"></a>    Error <span class="dt">string</span></span>
+<span id="cb14-62"><a href="#cb14-62"></a>}</span>
+<span id="cb14-63"><a href="#cb14-63"></a><span class="kw">func</span> NewError(err <span class="dt">error</span>) *Error {</span>
+<span id="cb14-64"><a href="#cb14-64"></a>    <span class="kw">return</span> &amp;Error{Error: err.Error()}</span>
+<span id="cb14-65"><a href="#cb14-65"></a>}</span>
+<span id="cb14-66"><a href="#cb14-66"></a></span>
+<span id="cb14-67"><a href="#cb14-67"></a><span class="co">//Simulate method that can fail</span></span>
+<span id="cb14-68"><a href="#cb14-68"></a><span class="kw">func</span> GetMessage(str <span class="dt">string</span>) (<span class="kw">map</span>[<span class="dt">string</span>]<span class="dt">string</span>, <span class="dt">error</span>) {</span>
+<span id="cb14-69"><a href="#cb14-69"></a>    <span class="kw">if</span> rand.Float32() &gt;= <span class="dv">0</span><span class="fl">.5</span> {</span>
+<span id="cb14-70"><a href="#cb14-70"></a>        <span class="kw">return</span> <span class="ot">nil</span>, fmt.Errorf(<span class="st">&quot;failed to [...]&quot;</span>)</span>
+<span id="cb14-71"><a href="#cb14-71"></a>    }</span>
+<span id="cb14-72"><a href="#cb14-72"></a>    <span class="kw">return</span> <span class="kw">map</span>[<span class="dt">string</span>]<span class="dt">string</span>{<span class="st">&quot;msg&quot;</span>: str}, <span class="ot">nil</span></span>
+<span id="cb14-73"><a href="#cb14-73"></a>}</span></code></pre></div>
