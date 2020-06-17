@@ -12,3 +12,4 @@ func main() {
 	oop.IsPublic()
 	// ext.isNotPublic() -> Unexported function 'isNotPublic' usage
 }
+

@@ -15,4 +15,5 @@ There are two level of visibility:
 ##  Inheritance
 Go allow Inheritance though composition.
 !code(examples/inheritance/inheritance.go)
+
  
